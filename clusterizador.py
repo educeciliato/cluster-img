@@ -88,12 +88,6 @@ def hsi_para_rgb(hsi):
 # ==================================================
 
 def calcular_cotovelo(pixels, k_min, k_max):
-    """
-    Roda K-Means para cada K na faixa e coleta a inércia.
-    A inércia é a soma das distâncias quadráticas de cada pixel
-    ao centroide do seu cluster — quanto menor, melhor o ajuste.
-    O 'cotovelo' é o ponto onde a redução começa a ser marginal.
-    """
     print(f"\nCalculando cotovelo de K={k_min} até K={k_max}...")
 
     ks = list(range(k_min, k_max + 1))
@@ -110,10 +104,6 @@ def calcular_cotovelo(pixels, k_min, k_max):
 
 
 def detectar_cotovelo(ks, inercias):
-    """
-    Detecta o cotovelo automaticamente pelo método da maior curvatura
-    (distância de cada ponto à linha que liga o primeiro ao último ponto).
-    """
     pontos = np.array(list(zip(ks, inercias)), dtype=np.float64)
 
     # Normaliza para colocar X e Y na mesma escala
@@ -137,7 +127,6 @@ def detectar_cotovelo(ks, inercias):
 
 
 def plotar_cotovelo(ks, inercias, k_ideal, pasta):
-    """Gera e salva o gráfico do cotovelo."""
     fig, ax = plt.subplots(figsize=(9, 5))
 
     ax.plot(ks, inercias, marker='o', linewidth=2,
@@ -168,7 +157,6 @@ def plotar_cotovelo(ks, inercias, k_ideal, pasta):
 # ==================================================
 
 def clusterizar(pixels, n_clusters):
-    """Roda K-Means e devolve rótulos e centros."""
     km = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
     rotulos = km.fit_predict(pixels)
     centros = km.cluster_centers_
@@ -176,7 +164,6 @@ def clusterizar(pixels, n_clusters):
 
 
 def gerar_imagem_quantizada(pixels, rotulos, centros, shape):
-    """Substitui cada pixel pelo centroide do seu cluster."""
     pixels_quantizados = centros[rotulos]
     hsi_quantizado = pixels_quantizados.reshape(shape)
     return hsi_para_rgb(hsi_quantizado)
@@ -187,10 +174,6 @@ def gerar_imagem_quantizada(pixels, rotulos, centros, shape):
 # ==================================================
 
 def plotar_comparativo(imagem_original, resultados_por_k, pasta):
-    """
-    Gera um painel com a imagem original e as versões
-    clusterizadas para cada K, em grade.
-    """
     total = len(resultados_por_k) + 1   # +1 para a original
     colunas = 4
     linhas = (total + colunas - 1) // colunas
@@ -229,10 +212,6 @@ def plotar_comparativo(imagem_original, resultados_por_k, pasta):
 # ==================================================
 
 def plotar_paleta(centros_hsi, rotulos, k, pasta):
-    """
-    Mostra as cores dos clusters ordenadas por frequência,
-    com a proporção de pixels de cada um.
-    """
     frequencia = np.bincount(rotulos)
     ordem = np.argsort(frequencia)[::-1]
 
